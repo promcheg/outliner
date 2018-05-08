@@ -5,4 +5,4 @@
  * @author waldemar
  *
  */
-package promcheg.outliner.persistence;
+package promcheg.outliner.model.entities;

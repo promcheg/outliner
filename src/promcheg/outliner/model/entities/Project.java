@@ -1,5 +1,6 @@
-package promcheg.outliner.persistence.entities;
+package promcheg.outliner.model.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,8 +11,18 @@ import java.util.List;
 public class Project {
 	String name;
 	String description;
-	List<Chapter> chapterList;
-	List<Asset> assetList;
+	ArrayList<Chapter> chapterList;
+	ArrayList<Asset> assetList;
+
+	public Project() {
+		super();
+	}
+
+	public Project(String name, String description) {
+		super();
+		this.name = name;
+		this.description = description;
+	}
 
 	public String getDescription() {
 		return description;
@@ -25,7 +36,7 @@ public class Project {
 		return chapterList;
 	}
 
-	public void setChapterList(List<Chapter> chapterList) {
+	public void setChapterList(ArrayList<Chapter> chapterList) {
 		this.chapterList = chapterList;
 	}
 
@@ -33,7 +44,7 @@ public class Project {
 		return assetList;
 	}
 
-	public void setAssetList(List<Asset> assetList) {
+	public void setAssetList(ArrayList<Asset> assetList) {
 		this.assetList = assetList;
 	}
 
@@ -43,5 +54,13 @@ public class Project {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public void add(Chapter chapter) {
+		chapterList.add(chapter);
+	}
+	
+	public void add(Asset asset) {
+		assetList.add(asset);
 	}
 }

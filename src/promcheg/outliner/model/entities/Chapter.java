@@ -1,4 +1,4 @@
-package promcheg.outliner.persistence.entities;
+package promcheg.outliner.model.entities;
 
 /**
  * 

@@ -1,4 +1,4 @@
-package promcheg.outliner.persistence;
+package promcheg.outliner.model;
 
 /**
  * 

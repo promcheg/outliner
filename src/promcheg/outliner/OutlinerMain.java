@@ -1,8 +1,14 @@
 package promcheg.outliner;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
@@ -11,11 +17,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
+import promcheg.outliner.model.entities.Project;
 import swing2swt.layout.BorderLayout;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 
 public class OutlinerMain {
 
@@ -129,7 +134,45 @@ public class OutlinerMain {
 		projectTreeContainer.setExpandHorizontal(true);
 		projectTreeContainer.setExpandVertical(true);
 		
-		Tree projectTree = new Tree(projectTreeContainer, SWT.BORDER);
+		final Tree projectTree = new Tree(projectTreeContainer, SWT.BORDER);
+		
+		final Menu treeContextMenu = new Menu(projectTree);
+		treeContextMenu.addMenuListener(new MenuAdapter() {
+
+			@Override
+			public void menuShown(MenuEvent e) {
+				TreeItem[] selection = projectTree.getSelection();
+				
+				Arrays.stream(selection).forEach(entry->{
+					System.out.println(entry.getText());
+				});
+				super.menuShown(e);
+			}
+			
+		});
+		
+		projectTree.setMenu(treeContextMenu);
+		
+		MenuItem addNewProject = new MenuItem(treeContextMenu, SWT.NONE);
+		addNewProject.setText("Add New Project");
+		
+		MenuItem addNewChapter = new MenuItem(treeContextMenu, SWT.NONE);
+		addNewChapter.setText("Add New Chapter");
+		
+		ProjectTreeItem<Project> treeItemProject_1 = new ProjectTreeItem<Project>(new Project("Project one", "description one"), projectTree, SWT.NONE);
+		treeItemProject_1.setText("Project 1");
+		ProjectTreeItem<Project> treeItemProject_2 = new ProjectTreeItem<Project>(new Project("Project two", "description two"), projectTree, SWT.NONE);
+		treeItemProject_2.setText("Project 2");
+		ProjectTreeItem<Project> treeItemProject_3 = new ProjectTreeItem<Project>(new Project("Project three", "description three"), projectTree, SWT.NONE);
+		treeItemProject_3.setText("Project 3");
+		ProjectTreeItem<Project> treeItemProject_4 = new ProjectTreeItem<Project>(new Project("Project four", "description four"), projectTree, SWT.NONE);
+		treeItemProject_4.setText("Project 4");
+		ProjectTreeItem<Project> treeItemProject_5 = new ProjectTreeItem<Project>(new Project("Project five", "description five"), projectTree, SWT.NONE);
+		treeItemProject_5.setText("Project 5");
+		ProjectTreeItem<Project> treeItemProject_6 = new ProjectTreeItem<Project>(new Project("Project six", "description six"), projectTree, SWT.NONE);
+		treeItemProject_6.setText("Project 6");
+		
+		
 		projectTreeContainer.setContent(projectTree);
 		projectTreeContainer.setMinSize(projectTree.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		
@@ -150,5 +193,42 @@ public class OutlinerMain {
 		detailContainer.setMinSize(detailTabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sashForm.setWeights(new int[] {1, 3});
 
+	}
+	
+	/**
+	 * 
+	 * @author waldemar
+	 *
+	 * @param <T>
+	 */
+	class ProjectTreeItem<T> extends TreeItem {
+		T uObject;
+		
+		/**
+		 * 
+		 * @param uObject
+		 * @param parent
+		 * @param style
+		 */
+		public ProjectTreeItem(T uObject, Tree parent, int style) {
+			this(parent, style);
+		}
+
+		/**
+		 * 
+		 * @param parent
+		 * @param style
+		 */
+		public ProjectTreeItem(Tree parent, int style) {
+			super(parent, style);
+		}
+
+		public T getuObject() {
+			return uObject;
+		}
+
+		public void setuObject(T uObject) {
+			this.uObject = uObject;
+		}
 	}
 }
