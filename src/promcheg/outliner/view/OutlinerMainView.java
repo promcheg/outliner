@@ -49,10 +49,6 @@ public class OutlinerMainView {
 	private void createMainMenu() {
 		Menu menu = new Menu(mainShell, SWT.BAR);
 		mainShell.setMenuBar(menu);	
-
-		OutlinerMenu.MAIN.getActionList().stream().forEach(action->{
-			createMenuItem(menu, action);			
-		});
 	}
 	
 	private void createMenuItem(Menu parent, OutlinerAction action) {

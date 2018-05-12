@@ -1,16 +1,14 @@
 package promcheg.outliner;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -19,12 +17,19 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import promcheg.outliner.model.entities.Project;
+import promcheg.outliner.view.OutlinerMenu;
 import swing2swt.layout.BorderLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class OutlinerMain {
 
 	protected Shell shell;
+	private Text textDescription;
+	private Text textContent;
 
 	/**
 	 * Launch the application.
@@ -63,69 +68,8 @@ public class OutlinerMain {
 		shell.setText("SWT Application");
 		shell.setLayout(new BorderLayout(0, 0));
 		
-		Menu menu = new Menu(shell, SWT.BAR);
-		shell.setMenuBar(menu);	
+		this.createMenu(OutlinerMenu.MAIN, null);
 		
-		MenuItem mntmFile = new MenuItem(menu, SWT.CASCADE);
-		mntmFile.setText("File");
-		
-		Menu menu_1 = new Menu(mntmFile);
-		mntmFile.setMenu(menu_1);
-		
-		MenuItem mntmOpen = new MenuItem(menu_1, SWT.NONE);
-		mntmOpen.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-				String fileName = dialog.open();
-				System.out.println(fileName);
-			}
-		});
-		mntmOpen.setText("Open");
-		
-		MenuItem mntmSave = new MenuItem(menu_1, SWT.NONE);
-		mntmSave.setText("Save");
-		mntmSave.addSelectionListener(new SelectionAdapter() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-			}
-		});
-		
-		MenuItem mntmExit = new MenuItem(menu_1, SWT.NONE);
-		mntmExit.setText("Exit");
-		mntmExit.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				super.widgetSelected(e);
-				System.exit(0);
-			}
-			
-		});
-		
-		MenuItem mntmEdit = new MenuItem(menu, SWT.CASCADE);
-		mntmEdit.setText("Edit");
-		
-		Menu menu_2 = new Menu(mntmEdit);
-		mntmEdit.setMenu(menu_2);
-		
-		MenuItem mntmCopy = new MenuItem(menu_2, SWT.NONE);
-		mntmCopy.setText("Copy");
-		
-		MenuItem mntmPaste = new MenuItem(menu_2, SWT.NONE);
-		mntmPaste.setText("Paste");
-		
-		MenuItem mntmHelp = new MenuItem(menu, SWT.CASCADE);
-		mntmHelp.setText("Help");
-		
-		Menu menu_3 = new Menu(mntmHelp);
-		mntmHelp.setMenu(menu_3);
-		
-		MenuItem mntmAbout = new MenuItem(menu_3, SWT.NONE);
-		mntmAbout.setText("About");
 		
 		SashForm sashForm = new SashForm(shell, SWT.NONE);
 		sashForm.setSashWidth(10);
@@ -153,23 +97,23 @@ public class OutlinerMain {
 		
 		projectTree.setMenu(treeContextMenu);
 		
-		MenuItem addNewProject = new MenuItem(treeContextMenu, SWT.NONE);
-		addNewProject.setText("Add New Project");
+		OutlinerMenu.TREE_CONTEXT.getChildren().stream().forEach(entry->{
+			MenuItem menuItem = new MenuItem(treeContextMenu, SWT.NONE);
+			menuItem.setText(entry.getCaption());
+			menuItem.setToolTipText(entry.getTooltip());
+		});
 		
-		MenuItem addNewChapter = new MenuItem(treeContextMenu, SWT.NONE);
-		addNewChapter.setText("Add New Chapter");
-		
-		ProjectTreeItem<Project> treeItemProject_1 = new ProjectTreeItem<Project>(new Project("Project one", "description one"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_1 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_1.setText("Project 1");
-		ProjectTreeItem<Project> treeItemProject_2 = new ProjectTreeItem<Project>(new Project("Project two", "description two"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_2 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_2.setText("Project 2");
-		ProjectTreeItem<Project> treeItemProject_3 = new ProjectTreeItem<Project>(new Project("Project three", "description three"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_3 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_3.setText("Project 3");
-		ProjectTreeItem<Project> treeItemProject_4 = new ProjectTreeItem<Project>(new Project("Project four", "description four"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_4 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_4.setText("Project 4");
-		ProjectTreeItem<Project> treeItemProject_5 = new ProjectTreeItem<Project>(new Project("Project five", "description five"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_5 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_5.setText("Project 5");
-		ProjectTreeItem<Project> treeItemProject_6 = new ProjectTreeItem<Project>(new Project("Project six", "description six"), projectTree, SWT.NONE);
+		TreeItem treeItemProject_6 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_6.setText("Project 6");
 		
 		
@@ -185,50 +129,64 @@ public class OutlinerMain {
 		TabItem tabItemWelcome = new TabItem(detailTabFolder, SWT.NONE);
 		tabItemWelcome.setText("Welcome");
 		
-		ScrolledComposite scrolledComposite = new ScrolledComposite(detailTabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		tabItemWelcome.setControl(scrolledComposite);
-		scrolledComposite.setExpandHorizontal(true);
-		scrolledComposite.setExpandVertical(true);
+		Composite composite = new Composite(detailTabFolder, SWT.NONE);
+		
+		tabItemWelcome.setControl(composite);
+		GridLayout gridLayout = new GridLayout(4, false);
+	    gridLayout.verticalSpacing = 8;	    
+		composite.setLayout(gridLayout);
+		
+		Label labelDescription = new Label(composite, SWT.NULL);
+		labelDescription.setText("Description");
+		
+		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gridData.horizontalSpan = 3;
+		
+		textDescription = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		textDescription.setLayoutData(gridData);
+		
+		Label labelContent = new Label(composite, SWT.NULL);
+		labelContent.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+		labelContent.setText("New Label");
+		
+		textContent = new Text(composite, SWT.WRAP | SWT.MULTI | SWT.BORDER | SWT.H_SCROLL
+		        | SWT.V_SCROLL);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL);
+	    gridData.horizontalSpan = 3;
+	    gridData.grabExcessVerticalSpace = true;
+	    gridData.grabExcessHorizontalSpace = true;
+		textContent.setLayoutData(gridData);
+		
 		detailContainer.setContent(detailTabFolder);
 		detailContainer.setMinSize(detailTabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		sashForm.setWeights(new int[] {1, 3});
 
 	}
-	
+
 	/**
 	 * 
-	 * @author waldemar
-	 *
-	 * @param <T>
+	 * @param menu
+	 * @param parent
 	 */
-	class ProjectTreeItem<T> extends TreeItem {
-		T uObject;
+	private void createMenu(OutlinerMenu menu, final Menu parent) {
+		AtomicReference<Menu> atomicParent = new AtomicReference<Menu>(parent);
 		
-		/**
-		 * 
-		 * @param uObject
-		 * @param parent
-		 * @param style
-		 */
-		public ProjectTreeItem(T uObject, Tree parent, int style) {
-			this(parent, style);
+		Menu mainMenu;
+		if(parent == null) {
+			mainMenu = new Menu(shell, SWT.BAR);
+			shell.setMenuBar(mainMenu);
+			atomicParent.set(mainMenu);
 		}
-
-		/**
-		 * 
-		 * @param parent
-		 * @param style
-		 */
-		public ProjectTreeItem(Tree parent, int style) {
-			super(parent, style);
-		}
-
-		public T getuObject() {
-			return uObject;
-		}
-
-		public void setuObject(T uObject) {
-			this.uObject = uObject;
-		}
-	}
+		
+		menu.getChildren().stream().forEach(entry->{
+			MenuItem menuItem = entry.hasChildren() ? new MenuItem(atomicParent.get(), SWT.CASCADE) : new MenuItem(atomicParent.get(), SWT.NONE);
+			menuItem.setText(entry.getCaption());
+			
+			if(entry.hasChildren()) {
+				Menu cascade = new Menu(atomicParent.get());
+				menuItem.setMenu(cascade);				
+				createMenu(entry, cascade);
+			}
+		});
+	}	
 }
