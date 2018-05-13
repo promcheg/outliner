@@ -1,4 +1,4 @@
-package promcheg.outliner.view;
+package promcheg.outliner.view.defines;
 
 import java.util.ArrayList;
 import java.util.Arrays;

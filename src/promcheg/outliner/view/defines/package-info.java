@@ -5,4 +5,4 @@
  * @author waldemar
  *
  */
-package promcheg.outliner.properties;
+package promcheg.outliner.view.defines;

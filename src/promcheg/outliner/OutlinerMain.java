@@ -8,22 +8,25 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import promcheg.outliner.view.OutlinerMenu;
+import promcheg.outliner.view.defines.OutlinerMenu;
 import swing2swt.layout.BorderLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 public class OutlinerMain {
 
@@ -94,8 +97,18 @@ public class OutlinerMain {
 			}
 			
 		});
-		
-		projectTree.setMenu(treeContextMenu);
+
+		projectTree.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseUp(MouseEvent event) {
+				Point point = new Point(event.x, event.y);
+				TreeItem treeNode = projectTree.getItem(point);				
+				if(treeNode != null && event.button == 3) {
+					treeContextMenu.setVisible(true);
+				}
+			}
+		});
 		
 		OutlinerMenu.TREE_CONTEXT.getChildren().stream().forEach(entry->{
 			MenuItem menuItem = new MenuItem(treeContextMenu, SWT.NONE);
@@ -105,6 +118,8 @@ public class OutlinerMain {
 		
 		TreeItem treeItemProject_1 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_1.setText("Project 1");
+		
+		
 		TreeItem treeItemProject_2 = new TreeItem(projectTree, SWT.NONE);
 		treeItemProject_2.setText("Project 2");
 		TreeItem treeItemProject_3 = new TreeItem(projectTree, SWT.NONE);
@@ -126,12 +141,29 @@ public class OutlinerMain {
 		
 		TabFolder detailTabFolder = new TabFolder(detailContainer, SWT.NONE);
 		
+		createWelcomeTabContent(detailTabFolder);
+		
+		TabItem projectTab = new TabItem(detailTabFolder, SWT.NONE);
+		projectTab.setText("Project");
+		
+		Composite projectComposite = new Composite(detailTabFolder, SWT.NONE);
+		projectTab.setControl(projectComposite);
+		
+		detailContainer.setContent(detailTabFolder);
+		detailContainer.setMinSize(detailTabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		sashForm.setWeights(new int[] {1, 3});
+	}
+
+	/**
+	 * @param detailTabFolder
+	 */
+	private void createWelcomeTabContent(TabFolder detailTabFolder) {
 		TabItem tabItemWelcome = new TabItem(detailTabFolder, SWT.NONE);
 		tabItemWelcome.setText("Welcome");
 		
-		Composite composite = new Composite(detailTabFolder, SWT.NONE);
-		
+		Composite composite = new Composite(detailTabFolder, SWT.NONE);		
 		tabItemWelcome.setControl(composite);
+		
 		GridLayout gridLayout = new GridLayout(4, false);
 	    gridLayout.verticalSpacing = 8;	    
 		composite.setLayout(gridLayout);
@@ -156,11 +188,6 @@ public class OutlinerMain {
 	    gridData.grabExcessVerticalSpace = true;
 	    gridData.grabExcessHorizontalSpace = true;
 		textContent.setLayoutData(gridData);
-		
-		detailContainer.setContent(detailTabFolder);
-		detailContainer.setMinSize(detailTabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		sashForm.setWeights(new int[] {1, 3});
-
 	}
 
 	/**
