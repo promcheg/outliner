@@ -2,6 +2,7 @@ package promcheg.outliner;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -15,6 +16,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -25,7 +27,14 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import promcheg.outliner.contoller.ActionContoller;
+import promcheg.outliner.contoller.MainController;
+import promcheg.outliner.contoller.types.ActionType;
+import promcheg.outliner.model.entities.Chapter;
+import promcheg.outliner.model.entities.Project;
+import promcheg.outliner.view.MainView;
 import promcheg.outliner.view.defines.OutlinerMenu;
+import promcheg.utils.Utils;
 import swing2swt.layout.BorderLayout;
 
 public class OutlinerMain {
@@ -33,6 +42,8 @@ public class OutlinerMain {
 	protected Shell shell;
 	private Text textDescription;
 	private Text textContent;
+	
+	private MainView mainView;
 
 	/**
 	 * Launch the application.
@@ -42,6 +53,7 @@ public class OutlinerMain {
 		try {
 			OutlinerMain window = new OutlinerMain();
 			window.open();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -51,12 +63,64 @@ public class OutlinerMain {
 	 * Open the window.
 	 */
 	public void open() {
+		this.shell = new Shell();
+		this.shell.setSize(1980, 1050);
+		this.shell.setText("Outliner");
+		this.shell.setLayout(new BorderLayout(0, 0));
 		Display display = Display.getDefault();
-		createContents();
+
+		this.mainView = new MainView(shell, new MainController(){
+
+			@Override
+			public void selectProject(Project selectedProject) {
+				
+			}
+
+			@Override
+			public void selectChapter(Chapter chapter) {
+				System.out.println(chapter.getContent());
+			}
+			
+		}, new ActionContoller() {
+			
+			@Override
+			public void executeAction(ActionType actionType) {
+				switch (actionType) {
+				case EXIT_APPLICATION:
+					System.exit(1);
+					break;
+				case NONE:
+					break;
+				case OPEN_FILE:
+					FileDialog fileOpenDialog = new FileDialog(shell, SWT.OPEN);
+					Project project = Utils.readEntity(fileOpenDialog.open(), Project.class);
+					mainView.openProject(project);
+					break;
+				case SAVE_FILE:
+					Project dummy = new Project();
+					dummy.setName("Dummy");
+					dummy.setDescription("Dummy description");
+					IntStream.range(1, 20).forEach(i-> {
+						Chapter chapter = new Chapter();
+						chapter.setDescription("Charge of the light brigade");
+						chapter.setContent("Half a leage");
+						dummy.addChapter(chapter);
+					});
+					FileDialog fileSaveDialog = new FileDialog(shell, SWT.SAVE);
+					Utils.writeEntity(fileSaveDialog.open(), dummy, Project.class);
+					break;
+				default:
+					break;
+				}
+				
+			}
+		});
+
+		this.mainView.createView();
 		shell.open();
 		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
+		while(!shell.isDisposed()) {
+			if(!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
@@ -72,7 +136,6 @@ public class OutlinerMain {
 		shell.setLayout(new BorderLayout(0, 0));
 		
 		this.createMenu(OutlinerMenu.MAIN, null);
-		
 		
 		SashForm sashForm = new SashForm(shell, SWT.NONE);
 		sashForm.setSashWidth(10);
@@ -95,7 +158,6 @@ public class OutlinerMain {
 				});
 				super.menuShown(e);
 			}
-			
 		});
 
 		projectTree.addMouseListener(new MouseAdapter() {

@@ -1,7 +1,5 @@
 package promcheg.outliner.view;
 
-import java.awt.TextComponent;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -11,12 +9,12 @@ import org.eclipse.swt.widgets.Text;
 
 import promcheg.outliner.model.entities.Project;
 
-public class OutlineProjectView {
+public class ProjectView {
 
 	/**
 	 * 
 	 */
-	public OutlineProjectView() {
+	public ProjectView() {
 		super();
 	}
 	

@@ -1,7 +1,6 @@
 package promcheg.outliner.model.entities;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 
@@ -32,7 +31,7 @@ public class Project {
 		this.description = description;
 	}
 
-	public List<Chapter> getChapterList() {
+	public ArrayList<Chapter> getChapterList() {
 		return chapterList;
 	}
 
@@ -40,7 +39,7 @@ public class Project {
 		this.chapterList = chapterList;
 	}
 
-	public List<Asset> getAssetList() {
+	public ArrayList<Asset> getAssetList() {
 		return assetList;
 	}
 
@@ -62,5 +61,17 @@ public class Project {
 	
 	public void add(Asset asset) {
 		assetList.add(asset);
+	}
+	
+	public boolean hasChapters() {
+		return chapterList != null && !chapterList.isEmpty();
+	}
+
+	public void addChapter(Chapter chapter) {
+		if(this.chapterList == null) {
+			this.chapterList = new ArrayList<>();
+		}
+		
+		this.chapterList.add(chapter);
 	}
 }
