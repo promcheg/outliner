@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import promcheg.outliner.contoller.MainController;
 import promcheg.outliner.contoller.handler.ProjectTreeController;
-import promcheg.outliner.contoller.types.EntityType;
 import promcheg.outliner.model.entities.Chapter;
 import promcheg.outliner.model.entities.Project;
 import promcheg.outliner.view.defines.OutlinerMenu;
@@ -54,9 +53,9 @@ public class ProjectTreeView implements ProjectTreeController {
 				if(treeNode != null) {
 					if(event.button == 1) {
 						if(treeNode.getData() instanceof Project) {
-							controller.selectProject((Project) treeNode.getData());	
+							controller.onProjectSelection((Project) treeNode.getData());	
 						} else {
-							controller.selectChapter((Chapter) treeNode.getData());
+							controller.onChapterSelection((Chapter) treeNode.getData());
 						}
 						
 					} else if(event.button == 3) {

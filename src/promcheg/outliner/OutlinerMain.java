@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import promcheg.outliner.contoller.ActionContoller;
 import promcheg.outliner.contoller.MainController;
 import promcheg.outliner.contoller.types.ActionType;
+import promcheg.outliner.contoller.types.KeyMap;
 import promcheg.outliner.model.entities.Chapter;
 import promcheg.outliner.model.entities.Project;
 import promcheg.outliner.view.MainView;
@@ -67,24 +67,22 @@ public class OutlinerMain {
 		this.shell.setSize(1980, 1050);
 		this.shell.setText("Outliner");
 		this.shell.setLayout(new BorderLayout(0, 0));
+		
 		Display display = Display.getDefault();
 
 		this.mainView = new MainView(shell, new MainController(){
 
 			@Override
-			public void selectProject(Project selectedProject) {
+			public void onProjectSelection(Project selectedProject) {
 				
 			}
 
 			@Override
-			public void selectChapter(Chapter chapter) {
+			public void onChapterSelection(Chapter chapter) {
 				System.out.println(chapter.getContent());
 			}
-			
-		}, new ActionContoller() {
-			
 			@Override
-			public void executeAction(ActionType actionType) {
+			public void onAction(ActionType actionType) {
 				switch (actionType) {
 				case EXIT_APPLICATION:
 					System.exit(1);
@@ -93,8 +91,10 @@ public class OutlinerMain {
 					break;
 				case OPEN_FILE:
 					FileDialog fileOpenDialog = new FileDialog(shell, SWT.OPEN);
-					Project project = Utils.readEntity(fileOpenDialog.open(), Project.class);
-					mainView.openProject(project);
+					if(fileOpenDialog != null) {
+						Project project = Utils.readEntity(fileOpenDialog.open(), Project.class);
+						mainView.openProject(project);
+					}
 					break;
 				case SAVE_FILE:
 					Project dummy = new Project();
@@ -114,6 +114,52 @@ public class OutlinerMain {
 				}
 				
 			}
+
+			@Override
+			public void onKeyPressed(boolean shift, boolean ctrl, boolean alt, int key) {
+				ActionType action = ActionType.getActionForKey(shift, ctrl, alt, key);
+				
+				if(action != null) {
+					onAction(action);
+				}
+				
+				
+				String keyString = new String(new byte[]{(byte)key});				
+				if(shift && alt && keyString != null && keyString.equalsIgnoreCase("p")) {
+					IntStream.range(64, 64+100).forEach(i -> {
+						String result = new String(new byte[]{(byte)i});
+						System.out.println("KEY_" + result.toUpperCase() + "(\"" + result + "\", " + i + "),");
+					});
+					
+					int mask = SWT.CTRL | SWT.ALT | KeyMap.KEY_E.intValue;
+					
+					System.out.println("--------------------------------------------------------");
+					System.out.println("shift: " + SWT.SHIFT);
+					System.out.println("ctrl: " + SWT.CTRL);
+					System.out.println("alt: " + SWT.ALT);
+					System.out.println("--------------------------------------------------------");
+					System.out.println("shift+alt: " + (SWT.SHIFT | SWT.ALT));
+					
+					System.out.println("mask - ALT: " + (mask - SWT.ALT));
+					System.out.println("mask - ALT - CTRL: " + (mask - SWT.ALT - SWT.CTRL));
+					
+					System.out.println(mask & SWT.CTRL);
+					System.out.println(mask & SWT.SHIFT);
+					System.out.println(mask & SWT.ALT);
+					
+					if((mask & SWT.CTRL) == SWT.CTRL) {
+						System.out.println("ctrl pressed");
+					}
+
+					if((mask & SWT.SHIFT) == SWT.SHIFT) {
+						System.out.println("shift pressed");
+					}
+
+					if((mask & SWT.ALT) == SWT.ALT) {
+						System.out.println("alt pressed");
+					}
+				}
+			}			
 		});
 
 		this.mainView.createView();
