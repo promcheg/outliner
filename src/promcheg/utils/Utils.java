@@ -27,8 +27,17 @@ public class Utils {
 	 * @param clazz
 	 * @return
 	 */
-	public static <T> T readEntity(String filename, Class<T> clazz) {		
-		String json = Utils.readFile(filename);
+	public static <T> T readEntity(String filename, Class<T> clazz) {
+		if(filename == null) {
+			return null;
+		}
+		
+		String json = "";
+		
+		if((json = Utils.readFile(filename)) == null) {
+			return null;
+		}
+		
 		Gson gson = (new GsonBuilder()).create();
 		T result = gson.fromJson(json, clazz);
 		return result;
@@ -122,6 +131,11 @@ public class Utils {
 	 * @return
 	 */
 	public static String readFile(String filename) {
-		return readFile(new File(filename));
+		File file = new File(filename);
+		if(file.exists() && file.isFile()) {
+			return readFile(new File(filename));	
+		}
+		
+		return null;
 	}
 }

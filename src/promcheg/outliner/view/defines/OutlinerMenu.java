@@ -3,7 +3,7 @@ package promcheg.outliner.view.defines;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import promcheg.outliner.contoller.types.ActionType;
+import promcheg.outliner.contoller.desc.ActionTypeDesc;
 
 /**
  * 
@@ -11,21 +11,21 @@ import promcheg.outliner.contoller.types.ActionType;
  *
  */
 public enum OutlinerMenu {
-	OPEN("Open", "Open a project file", ActionType.OPEN_FILE), 
-	SAVE("Save", "Save current project", ActionType.SAVE_FILE),
+	OPEN("Open", "Open a project file", ActionTypeDesc.OPEN_FILE), 
+	SAVE("Save", "Save current project", ActionTypeDesc.SAVE_FILE),
 	
 	
-	COPY("Copy", "Copy", ActionType.NONE),
-	PASTE("Paste", "Paste", ActionType.NONE),
-	ABOUT("About", "About", ActionType.NONE),
-	ADD_NEW_PROJECT("Add new project", "", ActionType.NONE),
-	ADD_NEW_CHAPTER("Add new chapter", "", ActionType.NONE),
-	ADD_NEW_BIT("Add new bit", "", ActionType.NONE),
-	OPTIONS("Settings", "Application settings", ActionType.NONE),
-	EXPORT_TO_PDF("Export to pdf", "", ActionType.NONE),
-	EXPORT_TO_HTML("Export to html", "", ActionType.NONE),
+	COPY("Copy", "Copy", ActionTypeDesc.NONE),
+	PASTE("Paste", "Paste", ActionTypeDesc.NONE),
+	ABOUT("About", "About", ActionTypeDesc.NONE),
+	ADD_NEW_PROJECT("Add new project", "", ActionTypeDesc.NONE),
+	ADD_NEW_CHAPTER("Add new chapter", "", ActionTypeDesc.NONE),
+	ADD_NEW_BIT("Add new bit", "", ActionTypeDesc.NONE),
+	OPTIONS("Settings", "Application settings", ActionTypeDesc.NONE),
+	EXPORT_TO_PDF("Export to pdf", "", ActionTypeDesc.NONE),
+	EXPORT_TO_HTML("Export to html", "", ActionTypeDesc.NONE),
 	EXPORT("Export", "Export current project", EXPORT_TO_PDF, EXPORT_TO_HTML),
-	EXIT("Exit", "Close application", ActionType.EXIT_APPLICATION),
+	EXIT("Exit", "Close application", ActionTypeDesc.EXIT_APPLICATION),
 	FILE("File", "", OPEN, SAVE, EXPORT, EXIT),
 	EDIT("Edit", "Edit", COPY, PASTE, OPTIONS),
 	HELP("Help", "", ABOUT),
@@ -37,13 +37,13 @@ public enum OutlinerMenu {
 	final private ArrayList<OutlinerMenu> children;
 	final private String tooltip;
 	final private String caption;
-	private ActionType actionType;
+	private ActionTypeDesc actionType;
 
 	/**
 	 * 
 	 * @param children
 	 */
-	OutlinerMenu(String caption, String tooltip, ActionType action) {
+	OutlinerMenu(String caption, String tooltip, ActionTypeDesc action) {
 		this(caption, tooltip);
 		this.actionType = action;
 	}
@@ -51,7 +51,7 @@ public enum OutlinerMenu {
 	OutlinerMenu(String caption, String tooltip) {
 		this.caption = caption;
 		this.tooltip = tooltip;
-		this.actionType = ActionType.NONE;
+		this.actionType = ActionTypeDesc.NONE;
 		this.children = new ArrayList<OutlinerMenu>();
 	}
 	
@@ -82,7 +82,7 @@ public enum OutlinerMenu {
 		return caption;
 	}
 
-	public ActionType getAction() {
+	public ActionTypeDesc getAction() {
 		return this.actionType;
 	}
 }

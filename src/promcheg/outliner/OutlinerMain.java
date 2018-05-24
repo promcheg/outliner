@@ -27,12 +27,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-import promcheg.outliner.contoller.MainController;
-import promcheg.outliner.contoller.types.ActionType;
-import promcheg.outliner.contoller.types.KeyMap;
+import promcheg.outliner.contoller.OutlinerMainController;
+import promcheg.outliner.contoller.depricated.AppController;
+import promcheg.outliner.contoller.desc.ActionTypeDesc;
+import promcheg.outliner.contoller.desc.KeyMapDesc;
 import promcheg.outliner.model.entities.Chapter;
 import promcheg.outliner.model.entities.Project;
-import promcheg.outliner.view.MainView;
+import promcheg.outliner.view.OutlinerMainView;
 import promcheg.outliner.view.defines.OutlinerMenu;
 import promcheg.utils.Utils;
 import swing2swt.layout.BorderLayout;
@@ -43,7 +44,15 @@ public class OutlinerMain {
 	private Text textDescription;
 	private Text textContent;
 	
-	private MainView mainView;
+	private OutlinerMainView mainView;
+
+	private AppController appController;
+	private OutlinerMainController mainController;
+	
+	public OutlinerMain() {
+		super();
+		this.mainController = new OutlinerMainController();
+	}
 
 	/**
 	 * Launch the application.
@@ -70,7 +79,24 @@ public class OutlinerMain {
 		
 		Display display = Display.getDefault();
 
-		this.mainView = new MainView(shell, new MainController(){
+		this.mainView = new OutlinerMainView(shell, createAppController());
+		this.mainView.setMainController(this.mainController);
+		this.mainView.createView();
+		
+		shell.open();
+		shell.layout();
+		while(!shell.isDisposed()) {
+			if(!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	private AppController createAppController() {
+		this.appController = new AppController(){
 
 			@Override
 			public void onProjectSelection(Project selectedProject) {
@@ -82,32 +108,25 @@ public class OutlinerMain {
 				System.out.println(chapter.getContent());
 			}
 			@Override
-			public void onAction(ActionType actionType) {
+			public void onAction(ActionTypeDesc actionType) {
 				switch (actionType) {
 				case EXIT_APPLICATION:
-					System.exit(1);
+					mainController.closeApplication();
 					break;
 				case NONE:
 					break;
 				case OPEN_FILE:
 					FileDialog fileOpenDialog = new FileDialog(shell, SWT.OPEN);
 					if(fileOpenDialog != null) {
-						Project project = Utils.readEntity(fileOpenDialog.open(), Project.class);
-						mainView.openProject(project);
+						mainController.openProject(fileOpenDialog.open());
 					}
 					break;
 				case SAVE_FILE:
-					Project dummy = new Project();
-					dummy.setName("Dummy");
-					dummy.setDescription("Dummy description");
-					IntStream.range(1, 20).forEach(i-> {
-						Chapter chapter = new Chapter();
-						chapter.setDescription("Charge of the light brigade");
-						chapter.setContent("Half a leage");
-						dummy.addChapter(chapter);
-					});
 					FileDialog fileSaveDialog = new FileDialog(shell, SWT.SAVE);
-					Utils.writeEntity(fileSaveDialog.open(), dummy, Project.class);
+					if(fileSaveDialog != null) {
+						mainController.saveProject(fileSaveDialog.open());	
+					}					
+					
 					break;
 				default:
 					break;
@@ -117,7 +136,7 @@ public class OutlinerMain {
 
 			@Override
 			public void onKeyPressed(boolean shift, boolean ctrl, boolean alt, int key) {
-				ActionType action = ActionType.getActionForKey(shift, ctrl, alt, key);
+				ActionTypeDesc action = ActionTypeDesc.getActionForKey(shift, ctrl, alt, key);
 				
 				if(action != null) {
 					onAction(action);
@@ -131,7 +150,7 @@ public class OutlinerMain {
 						System.out.println("KEY_" + result.toUpperCase() + "(\"" + result + "\", " + i + "),");
 					});
 					
-					int mask = SWT.CTRL | SWT.ALT | KeyMap.KEY_E.intValue;
+					int mask = SWT.CTRL | SWT.ALT | KeyMapDesc.KEY_E.intValue;
 					
 					System.out.println("--------------------------------------------------------");
 					System.out.println("shift: " + SWT.SHIFT);
@@ -159,17 +178,10 @@ public class OutlinerMain {
 						System.out.println("alt pressed");
 					}
 				}
-			}			
-		});
-
-		this.mainView.createView();
-		shell.open();
-		shell.layout();
-		while(!shell.isDisposed()) {
-			if(!display.readAndDispatch()) {
-				display.sleep();
 			}
-		}
+		};
+		
+		return this.appController;
 	}
 
 	/**
