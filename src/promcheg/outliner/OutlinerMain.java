@@ -35,7 +35,6 @@ import promcheg.outliner.model.entities.Chapter;
 import promcheg.outliner.model.entities.Project;
 import promcheg.outliner.view.OutlinerMainView;
 import promcheg.outliner.view.defines.OutlinerMenu;
-import promcheg.utils.Utils;
 import swing2swt.layout.BorderLayout;
 
 public class OutlinerMain {
